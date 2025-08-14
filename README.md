@@ -23,7 +23,8 @@ Manage your time with ease using the **Multi Timer** Chrome Extension! This ligh
 1. Clone this repository:
    ```bash
    git clone https://github.com/<your-username>/multi-timer-chrome-extension.git
+   ```
 2. Open Chrome and navigate to chrome://extensions.
-3. Enable Developer Mode (top-right corner).
+3. Enable Developer Mode (top right corner).
 4. Click Load unpacked and select the project folder.
-5. The Multi Timer extension will appear in your toolbar.
+5. This Multi Timer extension will appear in your toolbar.
