@@ -21,7 +21,7 @@ Play the classic **Reversi (Othello)** game directly in your Chrome browser! Thi
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/reversi-chrome-extension.git
+   git clone https://github.com/<your-username>/reversi-chrome-extension.git
    ```
 2. Open Chrome and navigate to chrome://extensions.
 3. Enable Developer Mode (top-right corner).
