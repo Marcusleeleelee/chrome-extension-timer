@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Reversi Game",
+  "version": "1.0",
+  "description": "Play Reversi directly in your Chrome browser.",
+  "icons": {
+    "128": "icon.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "permissions": []
+}
