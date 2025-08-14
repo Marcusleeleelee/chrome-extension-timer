@@ -1,218 +1,123 @@
-const board = document.getElementById("board");
-const restartButton = document.getElementById("restart");
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".tab");
+  const tabContents = document.querySelectorAll(".tab-content");
 
-const SIZE = 8; // Board size
-let gameBoard = [];
-let currentPlayer = "black";
+  const hoursInput = document.getElementById("hours-input");
+  const minutesInput = document.getElementById("minutes-input");
+  const secondsInput = document.getElementById("seconds-input");
+  const countdownList = document.getElementById("countdown-list");
+  const addCountdownButton = document.getElementById("add-countdown");
 
-// Initialize the game board
-function initBoard() {
-  gameBoard = Array(SIZE)
-    .fill(null)
-    .map(() => Array(SIZE).fill(null));
+  const alarmTimeInput = document.getElementById("alarm-time");
+  const alarmList = document.getElementById("alarm-list");
+  const addAlarmButton = document.getElementById("add-alarm");
 
-  // Set initial pieces
-  gameBoard[3][3] = "white";
-  gameBoard[3][4] = "black";
-  gameBoard[4][3] = "black";
-  gameBoard[4][4] = "white";
+  let activeCountdowns = {};
 
-  currentPlayer = "black";
-  renderBoard();
-}
+  // Tab switching
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tabContents.forEach((tc) => tc.classList.add("hidden"));
 
-// Render the board in the UI
-function renderBoard() {
-  // Render the board visually
-  board.innerHTML = "";
-  for (let row = 0; row < SIZE; row++) {
-    for (let col = 0; col < SIZE; col++) {
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
-      cell.dataset.row = row;
-      cell.dataset.col = col;
+      tab.classList.add("active");
+      tabContents[index].classList.remove("hidden");
+      tabContents[index].classList.add("active");
+    });
+  });
 
-      const piece = gameBoard[row][col];
-      if (piece) {
-        const pieceDiv = document.createElement("div");
-        pieceDiv.classList.add("piece", piece);
-        cell.appendChild(pieceDiv);
-      }
+  // Add Countdown
+  addCountdownButton.addEventListener("click", () => {
+    const hours = parseInt(hoursInput.value, 10) || 0;
+    const minutes = parseInt(minutesInput.value, 10) || 0;
+    const seconds = parseInt(secondsInput.value, 10) || 0;
+    let totalTime = hours * 3600 + minutes * 60 + seconds;
 
-      cell.addEventListener("click", () => handleMove(row, col));
-      board.appendChild(cell);
+    if (totalTime > 0) {
+      const id = `countdown-${Date.now()}`;
+      const li = document.createElement("li");
+      li.id = id;
+      li.innerHTML = `
+        <span>${formatTime(totalTime)}</span>
+        <button data-id="${id}" class="remove-countdown">Remove</button>
+      `;
+      countdownList.appendChild(li);
+
+      // Start real-time updates for this countdown
+      const interval = setInterval(() => {
+        if (totalTime <= 0) {
+          clearInterval(interval);
+          alert("Countdown Finished!");
+          li.remove();
+          delete activeCountdowns[id];
+        } else {
+          totalTime -= 1;
+          li.querySelector("span").textContent = formatTime(totalTime);
+        }
+      }, 1000);
+
+      activeCountdowns[id] = interval;
+
+      // Handle the Remove button
+      li.querySelector(".remove-countdown").addEventListener("click", () => {
+        clearInterval(interval);
+        li.remove();
+        delete activeCountdowns[id];
+      });
     }
-  }
-}
+  });
 
-// Handle player moves
-function handleMove(row, col) {
-  if (isValidMove(row, col, currentPlayer)) {
-    // Place the current player's piece
-    gameBoard[row][col] = currentPlayer;
+  // Add Alarm
+  addAlarmButton.addEventListener("click", () => {
+    const alarmTime = alarmTimeInput.value;
 
-    // Flip the opponent's pieces
-    flipPieces(row, col, currentPlayer);
+    if (alarmTime) {
+      const [hours, minutes] = alarmTime.split(":").map(Number);
+      const now = new Date();
+      const alarmDate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        hours,
+        minutes,
+        0
+      );
 
-    // Re-render the board to reflect the updated state
-    renderBoard();
+      if (alarmDate < now) alarmDate.setDate(alarmDate.getDate() + 1);
 
-    // Check game state after the move
-    checkGameState();
-  }
-}
+      const id = `alarm-${Date.now()}`;
+      const timeUntilAlarm = alarmDate.getTime() - now.getTime();
 
-// Check game state after each move
-function checkGameState() {
-  // Switch to the next player
-  currentPlayer = currentPlayer === "black" ? "white" : "black";
+      const li = document.createElement("li");
+      li.id = id;
+      li.innerHTML = `
+        <span>${alarmTime}</span>
+        <button data-id="${id}" class="remove-alarm">Remove</button>
+      `;
+      alarmList.appendChild(li);
 
-  // Check if the current player has valid moves
-  if (!hasValidMoves(currentPlayer)) {
-    // If the current player has no valid moves, switch to the other player
-    currentPlayer = currentPlayer === "black" ? "white" : "black";
+      const timeout = setTimeout(() => {
+        alert("Alarm Ringing!");
+        li.remove();
+        delete activeCountdowns[id];
+      }, timeUntilAlarm);
 
-    // If neither player has valid moves, end the game
-    if (!hasValidMoves(currentPlayer)) {
-      setTimeout(displayWinner, 100); // Delay to ensure flips are visible
-      return;
+      activeCountdowns[id] = timeout;
+
+      // Handle the Remove button
+      li.querySelector(".remove-alarm").addEventListener("click", () => {
+        clearTimeout(timeout);
+        li.remove();
+        delete activeCountdowns[id];
+      });
     }
+  });
+
+  // Format time
+  function formatTime(seconds) {
+    const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const s = String(seconds % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
   }
-}
-
-// Check if the move is valid
-function isValidMove(row, col, player) {
-  if (gameBoard[row][col]) return false;
-
-  // Check all directions
-  const directions = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-    [-1, -1],
-    [-1, 1],
-    [1, -1],
-    [1, 1],
-  ];
-
-  for (const [dx, dy] of directions) {
-    let x = row + dx;
-    let y = col + dy;
-    let hasOpponentPiece = false;
-
-    while (
-      x >= 0 &&
-      x < SIZE &&
-      y >= 0 &&
-      y < SIZE &&
-      gameBoard[x][y] &&
-      gameBoard[x][y] !== player
-    ) {
-      hasOpponentPiece = true;
-      x += dx;
-      y += dy;
-    }
-
-    if (
-      hasOpponentPiece &&
-      x >= 0 &&
-      x < SIZE &&
-      y >= 0 &&
-      y < SIZE &&
-      gameBoard[x][y] === player
-    ) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// Flip opponent pieces
-function flipPieces(row, col, player) {
-  const directions = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-    [-1, -1],
-    [-1, 1],
-    [1, -1],
-    [1, 1],
-  ];
-
-  for (const [dx, dy] of directions) {
-    let x = row + dx;
-    let y = col + dy;
-    let piecesToFlip = [];
-
-    while (
-      x >= 0 &&
-      x < SIZE &&
-      y >= 0 &&
-      y < SIZE &&
-      gameBoard[x][y] &&
-      gameBoard[x][y] !== player
-    ) {
-      piecesToFlip.push([x, y]);
-      x += dx;
-      y += dy;
-    }
-
-    if (
-      piecesToFlip.length > 0 &&
-      x >= 0 &&
-      x < SIZE &&
-      y >= 0 &&
-      y < SIZE &&
-      gameBoard[x][y] === player
-    ) {
-      for (const [fx, fy] of piecesToFlip) {
-        gameBoard[fx][fy] = player;
-      }
-    }
-  }
-}
-
-// Check if a player has valid moves
-function hasValidMoves(player) {
-  for (let row = 0; row < SIZE; row++) {
-    for (let col = 0; col < SIZE; col++) {
-      if (isValidMove(row, col, player)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-// Display the winner
-function displayWinner() {
-  const blackCount = countPieces("black");
-  const whiteCount = countPieces("white");
-
-  let winnerMessage;
-  if (blackCount > whiteCount) {
-    winnerMessage = "Black wins!";
-  } else if (whiteCount > blackCount) {
-    winnerMessage = "White wins!";
-  } else {
-    winnerMessage = "It's a tie!";
-  }
-
-  // Display the message
-  alert(winnerMessage);
-  initBoard();
-}
-
-// Count the number of pieces for a player
-function countPieces(player) {
-  return gameBoard.flat().filter((piece) => piece === player).length;
-}
-
-// Restart the game
-restartButton.addEventListener("click", initBoard);
-
-// Initialize the game
-initBoard();
+});

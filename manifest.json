@@ -1,14 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Reversi Game",
-  "version": "1.0",
-  "description": "Play Reversi directly in your Chrome browser.",
-  "icons": {
-    "128": "icon.png"
-  },
+  "name": "Multi Timer Extension",
+  "version": "1.4",
+  "description": "A Chrome extension with multiple countdowns and alarms.",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
-  "permissions": []
+  "icons": {
+    "48": "icon.png",
+    "128": "icon.png"
+  }
 }

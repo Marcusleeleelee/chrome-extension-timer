@@ -3,15 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reversi Game</title>
+    <title>Multi Timer Extension</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <div id="game-container">
-      <h1>Reversi</h1>
-      <div id="board"></div>
-      <div id="controls">
-        <button id="restart">Restart Game</button>
+    <div class="tabs">
+      <button id="tab1" class="tab active">Countdowns</button>
+      <button id="tab2" class="tab">Alarms</button>
+    </div>
+    <div id="content">
+      <!-- Countdown Tab -->
+      <div id="countdown-tab" class="tab-content active">
+        <h2>Countdown Timers</h2>
+        <div class="countdown-inputs">
+          <input type="number" id="hours-input" placeholder="H" min="0" />
+          <input
+            type="number"
+            id="minutes-input"
+            placeholder="M"
+            min="0"
+            max="59"
+          />
+          <input
+            type="number"
+            id="seconds-input"
+            placeholder="S"
+            min="0"
+            max="59"
+          />
+          <button id="add-countdown">Add</button>
+        </div>
+        <ul id="countdown-list"></ul>
+      </div>
+      <!-- Alarm Tab -->
+      <div id="alarm-tab" class="tab-content hidden">
+        <h2>Alarms</h2>
+        <div class="alarm-inputs">
+          <input type="time" id="alarm-time" />
+          <button id="add-alarm">Add</button>
+        </div>
+        <ul id="alarm-list"></ul>
+      </div>
+    </div>
+    <!-- Modal for notifications -->
+    <div id="modal" class="hidden">
+      <div class="modal-content">
+        <p id="modal-message"></p>
+        <button id="close-modal">Close</button>
       </div>
     </div>
     <script src="popup.js"></script>
