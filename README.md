@@ -2,7 +2,7 @@
 
 Manage your time with ease using the **Multi Timer** Chrome Extension! This lightweight and interactive tool allows you to set multiple countdowns and alarms directly from your browser.
 
-![Demo](./Demo.png)
+![Demo](Demo.png)
 
 ---
 
