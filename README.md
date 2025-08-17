@@ -18,7 +18,7 @@ Manage your time with ease using the **Multi Timer** Chrome Extension! This ligh
 
 ## **How to Install**
 
-### From Source (For Developers):
+### From Source:
 
 1. Clone this repository:
    ```bash
