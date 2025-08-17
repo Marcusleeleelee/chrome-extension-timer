@@ -22,7 +22,7 @@ Manage your time with ease using the **Multi Timer** Chrome Extension! This ligh
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/<your-username>/multi-timer-chrome-extension.git
+   git clone https://github.com/Marcusleeleelee/chrome-extension-timer.git
    ```
 2. Open Chrome and navigate to chrome://extensions.
 3. Enable Developer Mode (top-right corner).
